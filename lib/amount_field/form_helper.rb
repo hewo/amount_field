@@ -4,7 +4,7 @@ module AmountField #:nodoc:
     #TODO/2010-04-23/tb remove redundant code
     # using @template.amount_field(object, method, options) !?
     
-    module FormHelper #:nodoc:
+    module FormHelper
 
       include ActionView::Helpers::NumberHelper
 
@@ -12,12 +12,12 @@ module AmountField #:nodoc:
         format_options = I18n.t(:'number.amount_field.format', :raise => true) rescue {}
         format_options = format_options.merge(AmountField::ActiveRecord::Validations.configuration)
         format_options.merge!(options.delete(:format) || {})
-
+        
         object = options.delete(:object) || instance_variable_get("@#{object_name}")
 
         # if no explicit value is given, we set a formatted one. In case of an error we take the
         # original value inserted by the user.
-        unless object.errors.on(method)
+        if object.errors[method].blank?
           options[:value] ||= number_with_precision(object.send(method), format_options)
         else
           options[:value] ||= object.send("#{AmountField::Configuration.prefix}_#{method}") || object.send("#{method}_before_type_cast")
@@ -32,7 +32,7 @@ module AmountField #:nodoc:
 
     end
 
-    module FormBuilder #:nodoc:
+    module FormBuilder
 
       include ActionView::Helpers::NumberHelper
 
@@ -47,7 +47,7 @@ module AmountField #:nodoc:
 
         # if no explicit value is given, we set a formatted one. In case of an error we take the
         # original value inserted by the user.
-        unless object.errors.on(method)
+        if object.errors[method].blank?
           options[:value] ||= number_with_precision(object.send(method), format_options)
         else
           options[:value] ||= object.send("#{AmountField::Configuration.prefix}_#{method}") || object.send("#{method}_before_type_cast")

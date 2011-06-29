@@ -1,12 +1,16 @@
-require 'rubygems'
-require 'rake'
-require 'echoe'
+require 'bundler'
+Bundler::GemHelper.install_tasks
 
-Echoe.new('amount_field', '1.4.2') do |p|
-  p.description   = "Rails gem/plugin that accepts (amount) values in german or us format like 1.234,56 or 1,234.56"
-  p.url           = "http://github.com/thomasbaustert/amount_field"
-  p.author        = "Thomas Baustert"
-  p.email         =" business@thomasbaustert.de"
-  p.ignore_pattern = ["tmp/*", "script/*"]
-  p.development_dependencies = []
+require 'rake'
+require 'rake/testtask'
+require 'rake/rdoctask'
+
+desc 'Default: run tests'
+task :default => :test
+
+Rake::TestTask.new(:test) do |t|
+  t.libs << 'lib'
+  t.libs << 'test'
+  t.pattern = 'test/**/*_test.rb'
+  t.verbose = true
 end
